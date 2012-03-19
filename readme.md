@@ -2,10 +2,10 @@
 Send SMS or make calls from the command line.
   
 Features:
-*Google contact lookup
-*Login cookie storage
-*Split messages automatically on 140 character boundaries
-*JSON config file
+* Google contact lookup
+* Login cookie storage
+* Split messages automatically on 140 character boundaries
+* JSON config file
   
 Usage: `gv [-c config_file] sms [destination] [message]`  
 Usage: `gv [-c config_file] call [destination] [phone to ring]`  
