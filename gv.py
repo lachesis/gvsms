@@ -1,4 +1,5 @@
 #!/usr/bin/python2.7
+from nethandler import NetHandlerRetriesFailed
 import re,sys,time,os
 from argparse import ArgumentParser
 import getpass
@@ -37,12 +38,9 @@ def common(args,config):
     gv = GVHandler()
 
     # Load auth token if available
-    try:
-        if config.get('token',None):
-            gv.setAuthToken(config.get('token',None))
-    except:
-        print 'exe'
-        raise
+    if config.get('token',None):
+        if not gv.setAuthToken(config.get('token',None)):
+            alert( 'Cookie login failed.' )
 
     # Login if we still need to
     if not gv.loggedin:
