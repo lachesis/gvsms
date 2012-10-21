@@ -129,7 +129,9 @@ class GVHandler:
         
         try: 
             self.getRnrse()
-        except REFailure as e:
+        except (REFailure,nethandler.NetHandlerRetriesFailed) as e:
+            self.loggedIn = False
+            self.authtok = None
             raise REFailure("Regular expression failure. Cookie has probably expired.")
 
     def saveAuthToken(self,filename):
@@ -179,7 +181,7 @@ class GVHandler:
         if not self.rnrse:
             if not self.gvhomedata:
                 # Fetch the homepage
-                self.gvhomedata = self.net.open('https://www.google.com/voice/#inbox',extra_headers={'Authorization':'GoogleLogin auth={0}'.format(self.authtok)}).read()
+                self.gvhomedata = self.net.get('https://www.google.com/voice/#inbox',extra_headers={'Authorization':'GoogleLogin auth={0}'.format(self.authtok)})
                 
             # Go through the home page and grab the value for the hidden
             # form field "_rnr_se", which must be included when sending texts

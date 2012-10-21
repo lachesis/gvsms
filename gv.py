@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 import getpass
 import json
 from gvlib import *
+from nethandler import NetHandlerRetriesFailed
 
 def choosePhone(input=''):
     if input:
@@ -40,9 +41,7 @@ def common(args,config):
     try:
         if config.get('token',None):
             gv.setAuthToken(config.get('token',None))
-    except:
-        print 'exe'
-        raise
+    except (REFailure,NetHandlerRetriesFailed): gv.loggedin = False
 
     # Login if we still need to
     if not gv.loggedin:
@@ -74,7 +73,7 @@ def send_sms(args,config):
 #    print
 
     gv = common(args,config)
-    
+
     dest = args.destination
     msg = args.message
     if dest == None:
