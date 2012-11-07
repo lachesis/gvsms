@@ -125,14 +125,23 @@ class GVHandler:
 
     def setAuthToken(self,token):
         self.authtok = token
-        self.loggedIn = True
-        
-        try: 
-            self.getRnrse()
-        except (REFailure,nethandler.NetHandlerRetriesFailed) as e:
-            self.loggedIn = False
-            self.authtok = None
-            raise REFailure("Regular expression failure. Cookie has probably expired.")
+        if token:
+            self.loggedIn = True
+            
+            try: 
+                self.getRnrse()
+            except REFailure as e:
+                self.loggedIn = False
+                self.authtok = None
+                return False
+            except nethandler.NetHandlerRetriesFailed as e:
+                if str(e) == "HTTP Error 401: Unauthorized":
+                    self.loggedIn = False
+                    self.authtok = None
+                    return False
+                raise
+
+            return True
 
     def saveAuthToken(self,filename):
         if not self.authtok:
