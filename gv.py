@@ -42,10 +42,10 @@ def common(args,config):
     try:
         if config.get('token',None):
             gv.setAuthToken(config.get('token',None))
-    except (REFailure,NetHandlerRetriesFailed): gv.loggedin = False
+    except (REFailure,NetHandlerRetriesFailed): gv.loggedIn = False
 
     # Login if we still need to
-    if not gv.loggedin:
+    if not gv.loggedIn:
         username = config.get('username',None)
         password = config.get('password',None)
         token = config.get('token', None)
