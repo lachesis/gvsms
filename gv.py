@@ -17,7 +17,7 @@ def choosePhone(input=''):
         if p.equals(input):
             return p
     raise Exception("Invalid phone.")
-    
+
 def chkStatus(status):
     if status == '{"ok":true,"data":{"code":0}}':
         alert( "Success." )
@@ -28,7 +28,7 @@ def chkStatus(status):
 
 def alert(message):
     print message
-        
+
 def get(prompt):
     return raw_input(prompt)
 
@@ -42,19 +42,20 @@ def common(args,config):
     try:
         if config.get('token',None):
             gv.setAuthToken(config.get('token',None))
-    except (REFailure,NetHandlerRetriesFailed): gv.loggedin = False
+    except (REFailure,NetHandlerRetriesFailed): gv.loggedIn = False
 
     # Login if we still need to
-    if not gv.loggedin:
+    if not gv.loggedIn:
         username = config.get('username',None)
         password = config.get('password',None)
-        if not (username and password):
+        token = config.get('token', None)
+        if not (username and (password or token)):
             alert( 'You cannot log in without a username and password.' )
             sys.exit(1)
         if not re.match(r'(?i)\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b',username): # Invalid username
             alert( 'You specified %s, which is not a valid email address. Perhaps you forgot the "@gmail.com"?' % (username,) )
             sys.exit(1)
-        
+
         gv.setCredentials(username,password)
         gv.login()
 
@@ -81,7 +82,7 @@ def send_sms(args,config):
         dest = get("Destination number: ")
     if msg == None:
         msg = get("Message to send (end with newline): ")
-    
+
     # Compare against contacts
     pn = gv.getNumber(dest)[0] # TODO: Alert when more than one number is returned.
     if pn.name:
@@ -89,7 +90,7 @@ def send_sms(args,config):
         if not pn.isType('mobile'):
             print "Warning: We're trying to send a text to a %s number!" % (pn.phoneType,)
     dest = pn.phoneNumber
-    
+
     # Send the SMS
     print "Sending '%s' to %s." % (msg,dest)
     try:
@@ -102,49 +103,49 @@ def send_sms(args,config):
             slice = gv.MAXSMSLEN
             if len(msg) < slice:
                 slice = len(msg)
-            
+
             # Append to list
             msglist.append(msg[:slice].strip())
-            
+
             # Remove from string
             msg = msg[slice:]
-        
+
         # Ask user: should we still send?
         inp = get("Split into {0} messages [Y,n]? ".format(len(msglist)))
         if inp.lower() in ('n','q'):
             raise
-            
+
         status = True
         for i,msg in enumerate(msglist):
             print "Message {0}:".format(i),
             status = status and chkStatus(gv.sendSMS(dest,msg))
         return status
 
-def make_call(args,config): 
+def make_call(args,config):
 #    print "GVDial v0.6"
 #    print "By Eric Swanson"
 #    print
-    
+
     gv = common(args,config)
-    
+
     dest = args.destination
     src = args.source
     if dest == None:
         dest = get("Number to call: ")
     if src == None:
         src = get("Phone to ring (blank for a menu): ")
-        
+
     # Compare against contacts
     pn = gv.getNumber(dest)[0] # TODO: Alert when more than one number is returned.
     if pn.name:
         print "Looked up contact: %s (%s)" % (pn.name,pn)
     dest = pn.phoneNumber
-    
+
     if not src: # Prompt for source phone
         tp = choosePhone()
     else:
         tp = choosePhone(src)
-    
+
     # Place the call
     print "Calling %s using phone %s." % (dest,tp)
     return chkStatus(gv.placeCall(dest,tp.number))
@@ -171,7 +172,7 @@ try:
         call_parser.set_defaults(func=make_call)
 
         args = parser.parse_args()
- 
+
         config = {}
         try:
             with open(args.configpath,'r') as inp:
