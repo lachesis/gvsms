@@ -8,7 +8,7 @@ class SMSTooLong(Exception): pass
 class InvalidDestination(Exception): pass
 class InvalidType(Exception): pass
 
-class Phone:
+class Phone(object):
     def __init__(self,id,name,number):
         self.id = id
         self.name = name
@@ -29,7 +29,7 @@ class Phone:
             pass
         return False
 
-class GVHandler:
+class GVHandler(object):
     def __init__(self):
         self.MAXSMSLEN = 160
         self.net = nethandler.NetHandler()
@@ -275,10 +275,10 @@ class GVHandler:
             raise InvalidDestination("The input %s doesn't correspond to a valid contact." % (input,))
         elif len(list) > 1:
             raise InvalidDestination("The input %s corresponds to multiple contacts." % (input,))
-        
+
         return list[0]
     
-    def getNumber(self,input,type='p'): # type = Primary
+    def getNumber(self,input,type='m'): # type = Primary
         ''' Try to get a valid number by matching an input against the contacts list. '''
         if self.isNumber(input):
             return [ Number(phoneNumber = input) ]
@@ -297,7 +297,7 @@ class GVHandler:
         
         return data
 
-class Number:
+class Number(object):
     def __init__(self,obj=None,name=None,phoneNumber=None):
         self.phoneNumber = phoneNumber
         self.name = name
@@ -333,7 +333,7 @@ class Number:
     def __str__(self):
         return "%s %s" % (self.displayNumber and self.displayNumber or self.phoneNumber,self.phoneType)
         
-class Contact:
+class Contact(object):
     def __init__(self,json):
         #self.id = int(json['contactId'])
         self.name = json['name']

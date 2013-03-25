@@ -98,6 +98,7 @@ def send_sms(args,config):
         status = chkStatus(status)
     except SMSTooLong: # Break the message into shorter ones
         msglist = []
+        mlen = len(msg)
         while len(msg) > 0:
             # Choose slice size
             slice = gv.MAXSMSLEN
@@ -111,7 +112,7 @@ def send_sms(args,config):
             msg = msg[slice:]
 
         # Ask user: should we still send?
-        inp = get("Split into {0} messages [Y,n]? ".format(len(msglist)))
+        inp = get("Too long ({0}/{1}). Split into {2} messages [Y,n]? ".format(mlen,gv.MAXSMSLEN,len(msglist)))
         if inp.lower() in ('n','q'):
             raise
 
