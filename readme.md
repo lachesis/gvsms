@@ -1,3 +1,8 @@
+#Defunct
+Google has deprecated and removed [ClientLogin](https://developers.google.com/identity/protocols/AuthForInstalledApps) and none of their public OAuth APIs support Google Voice. Some other projects have had luck faking their user login flow, but I don't want to put in that level of time and effort.
+
+I've basically moved on to using email to reply to an old SMS with someone. When one isn't available, I use the Google Voice webapp. :( :(
+
 #Google Voice command line tool
 Send SMS or make calls from the command line.
   
